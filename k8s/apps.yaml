@@ -1,0 +1,113 @@
+# ==========================================
+# 1. PRODUCTOR
+# ==========================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eolico-producer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: producer
+  template:
+    metadata:
+      labels:
+        app: producer
+    spec:
+      containers:
+      - name: producer
+        image: producer:latest
+        imagePullPolicy: IfNotPresent
+
+# ==========================================
+# 2. CONSUMIDOR SQL (G3 - Operadores)
+# ==========================================
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-sql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer-sql
+  template:
+    metadata:
+      labels:
+        app: consumer-sql
+    spec:
+      containers:
+      - name: consumer-sql
+        image: consumer-sql:latest
+        imagePullPolicy: IfNotPresent
+
+# ==========================================
+# 3. CONSUMIDOR CONTROL (G3 - Operadores)
+# ==========================================
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-control
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer-control
+  template:
+    metadata:
+      labels:
+        app: consumer-control
+    spec:
+      containers:
+      - name: consumer-control
+        image: consumer-control:latest
+        imagePullPolicy: IfNotPresent
+
+# ==========================================
+# 4. CONSUMIDOR NoSQL (BASE)
+# ==========================================
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-nosql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer-nosql
+  template:
+    metadata:
+      labels:
+        app: consumer-nosql
+    spec:
+      containers:
+      - name: consumer-nosql
+        image: consumer-nosql:latest
+        imagePullPolicy: IfNotPresent
+
+# ==========================================
+# 5. CONSUMIDOR TREND ANALYZER
+# ==========================================
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer-trend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer-trend
+  template:
+    metadata:
+      labels:
+        app: consumer-trend
+    spec:
+      containers:
+      - name: consumer-trend
+        image: consumer-trend:latest
+        imagePullPolicy: IfNotPresent
