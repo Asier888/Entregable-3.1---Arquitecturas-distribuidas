@@ -103,9 +103,10 @@ def main():
             channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
             channel.start_consuming()
             
-        except pika.exceptions.AMQPConnectionError:
-            print("[WARN] Conexión con RabbitMQ perdida. Reintentando en 5s...")
+        except Exception as e:
+            print(f"[ERROR CRÍTICO] Fallo en la conexión: {e}. Reiniciando contenedor...")
             time.sleep(5)
+            os._exit(1)
 
 if __name__ == '__main__':
     main()
