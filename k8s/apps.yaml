@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: producer
-        image: producer:latest
+        image: eolico-producer:latest
         imagePullPolicy: IfNotPresent
 
 # ==========================================
