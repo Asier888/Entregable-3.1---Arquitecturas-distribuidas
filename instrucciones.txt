@@ -1,0 +1,74 @@
+# INSTRUCCIONES DE INSTALACIÓN Y EJECUCIÓN
+# Arquitecturas de Software Distribuidas - Entregable 3.1
+# Grupo 3 (Operadores)
+
+=========================================
+1. PREPARACIÓN Y DESPLIEGUE
+=========================================
+
+1. Asegúrate de que Docker está iniciado:
+docker ps
+
+2. Inicializa Minikube:
+minikube start --driver docker
+
+3. Entra en la carpeta principal del proyecto:
+cd ~/ruta-de-tu-proyecto
+
+4. Construye las imágenes de Docker de cada componente:
+docker build -t producer:latest ./producer
+docker build -t consumer-nosql:latest ./consumer_nosql
+docker build -t consumer-trend:latest ./consumer_trend
+docker build -t consumer-sql:latest ./consumer_sql
+docker build -t consumer-control:latest ./consumer_control
+
+5. Carga las imágenes en Minikube (paso clave para que funcionen en local):
+minikube image load producer:latest
+minikube image load consumer-nosql:latest
+minikube image load consumer-trend:latest
+minikube image load consumer-sql:latest
+minikube image load consumer-control:latest
+
+6. Despliega la infraestructura base (RabbitMQ, MongoDB, PostgreSQL):
+kubectl apply -f k8s/base-infra.yaml
+
+7. Espera a que los pods estén activos (unos 60 segundos):
+kubectl get pods -w
+(Usa Ctrl+C para salir del modo vigilancia cuando estén todos en 'Running')
+
+8. Despliega los microservicios de la aplicación:
+kubectl apply -f k8s/apps.yaml
+
+9. Espera a que los nuevos pods estén activos:
+kubectl get pods -w
+
+=========================================
+2. VERIFICACIÓN (COMANDOS PARA EL VÍDEO)
+=========================================
+Abre diferentes pestañas en la terminal y ejecuta estos comandos simultáneamente para demostrar la ejecución paralela:
+
+- Ver logs del Productor (lanzando telemetría):
+kubectl logs -l app=producer -f
+
+- Ver logs del Almacenador NoSQL (guardando todo en MongoDB):
+kubectl logs -l app=consumer-nosql -f
+
+- Ver logs del Trend Analyzer (analizando en memoria):
+kubectl logs -l app=consumer-trend -f
+
+- Ver logs del Consumidor SQL (Reto G3 - Guardando alertas en Postgres):
+kubectl logs -l app=consumer-sql -f
+
+- Ver logs del Consumidor de Control (Reto G3 - Simulando maniobra de 3s):
+kubectl logs -l app=consumer-control -f
+
+=========================================
+3. LIMPIEZA Y FINALIZACIÓN
+=========================================
+
+1. Borra los despliegues de Kubernetes para dejar el clúster limpio:
+kubectl delete -f k8s/apps.yaml
+kubectl delete -f k8s/base-infra.yaml
+
+2. Apaga Minikube (opcional, si has terminado de trabajar):
+minikube stop
